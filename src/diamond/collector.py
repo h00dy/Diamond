@@ -254,6 +254,8 @@ class Collector(object):
                                  'Mutually exclusive with metrics_blacklist',
             'metrics_blacklist': 'Regex to match metrics to block. ' +
                                  'Mutually exclusive with metrics_whitelist',
+            'tags': '(optional) space seperated "key1=value1 key2=value2" tags'
+            + ' to be attached to the metrics',
         }
 
     def get_default_config(self):
@@ -385,11 +387,12 @@ class Collector(object):
         ttl = float(self.config['interval']) * float(
             self.config['ttl_multiplier'])
 
+        tags = self.config.get('tags')
         # Create Metric
         try:
             metric = Metric(path, value, raw_value=raw_value, timestamp=None,
                             precision=precision, host=self.get_hostname(),
-                            metric_type=metric_type, ttl=ttl)
+                            metric_type=metric_type, ttl=ttl, tags=tags)
         except DiamondException:
             self.log.error(('Error when creating new Metric: path=%r, '
                             'value=%r'), path, value)
