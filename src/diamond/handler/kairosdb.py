@@ -2,32 +2,32 @@
 Send metrics to a [KairosDB](http://kairosdb.github.io/) using telnet or rest
 method.
 
-add config to diamond.conf:
+Add the following configuration to diamond.conf:
 
 [[KairosDBHandler]]
 host = localhost
 port = 4242
 
-Optionaly if you like to usa Tags (Metrics 2.0), you should add field [[[tags]]] in collector config.
+Optionaly if you like to usa Tags, you should add field [[[tags]]] in collector config.
 Example:
 
 [[CPUCollector]]
 enabled = True
 [[[tags]]]
 env=develop
-host=localhost
 
 """
 
+import socket
+
 from Handler import Handler
 from diamond.collector import get_hostname
-import socket
 
 
 class KairosDBHandler(Handler):
     """
     Implements the abstract Handler class, sending data to kairosdb.
-    It sets by default tag [host] which indicates hostname.
+    It sets by default tag host which indicates hostname.
     """
 
     RETRY = 3
@@ -102,12 +102,10 @@ class KairosDBHandler(Handler):
         # Append the data to the array as a string
         # Add default tag
 
-        host = " host={hostname}".format(hostname=self.hostname)
-
         tags = self._tags_parser(metric.tags or '')
 
         if not 'host' in tags:
-            tags += host
+            tags += " host={hostname}".format(hostname=self.hostname)
 
         command = "put {metric} {timestamp} {value} {tags} \n".format(
             metric="{}.{}".format(metric.getCollectorPath(),
