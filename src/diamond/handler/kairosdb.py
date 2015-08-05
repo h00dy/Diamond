@@ -88,11 +88,9 @@ class KairosDBHandler(Handler):
         """
         Parse tags to KairosDB format "key1=value1 key2=value2...keyN=valueN".
         """
-        parsed_tags = ''
-        if isinstance(tags, dict):
-            for key, value in tags.iteritems():
-                parsed_tags += "{key}={value} ".format(key=key, value=value)
 
+        if isinstance(tags, dict):
+            parsed_tags = " ".join(["{}={}".format(k, v) for k, v in tags.iteritems()])
         else:
             parsed_tags = tags
         return parsed_tags
@@ -104,7 +102,7 @@ class KairosDBHandler(Handler):
         # Append the data to the array as a string
         # Add default tag
 
-        host = "host={hostname}".format(hostname=self.hostname)
+        host = " host={hostname}".format(hostname=self.hostname)
 
         tags = self._tags_parser(metric.tags or '')
 
