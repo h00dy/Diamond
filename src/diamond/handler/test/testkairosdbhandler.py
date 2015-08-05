@@ -20,13 +20,6 @@ def fake_connection(self):
     self.socket = Mock()
 
 
-def fake_bad_connection(self):
-    '''
-    Fake couldn't connect
-    '''
-    self.socket = None
-
-
 class TestKairosdbHandler(unittest.TestCase):
 
     def setUp(self):
