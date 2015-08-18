@@ -17,6 +17,7 @@ from diamond.metric import Metric
 from diamond.utils.config import load_config
 from error import DiamondException
 
+
 # Detect the architecture of the system and set the counters for MAX_VALUES
 # appropriately. Otherwise, rolling over counters will cause incorrect or
 # negative values.
@@ -201,6 +202,8 @@ class Collector(object):
 
                 if self.name in config['collectors']:
                     self.config.merge(config['collectors'][self.name])
+                    if 'tags' in config['collectors'][self.name]:
+                        self.config.merge(config['collectors'][self.name]['tags'])
 
         if override_config is not None:
             if 'collectors' in override_config:
@@ -254,7 +257,7 @@ class Collector(object):
                                  'Mutually exclusive with metrics_blacklist',
             'metrics_blacklist': 'Regex to match metrics to block. ' +
                                  'Mutually exclusive with metrics_whitelist',
-            'tags': '(optional) space seperated "key1=value1 key2=value2" tags'
+            'tags': '(optional) tags in format [[[tags]]]'
             + ' to be attached to the metrics',
         }
 
@@ -388,6 +391,7 @@ class Collector(object):
             self.config['ttl_multiplier'])
 
         tags = self.config.get('tags')
+
         # Create Metric
         try:
             metric = Metric(path, value, raw_value=raw_value, timestamp=None,
