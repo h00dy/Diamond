@@ -257,7 +257,7 @@ class Collector(object):
                                  'Mutually exclusive with metrics_blacklist',
             'metrics_blacklist': 'Regex to match metrics to block. ' +
                                  'Mutually exclusive with metrics_whitelist',
-            'tags': '(optional) space seperated "key1=value1 key2=value2" tags'
+            'tags': '(optional) tags in format [[[tags]]]'
             + ' to be attached to the metrics',
         }
 
