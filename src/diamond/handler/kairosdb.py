@@ -2,19 +2,28 @@
 Send metrics to a [KairosDB](http://kairosdb.github.io/) using telnet or rest
 method.
 
+<<<<<<< HEAD
 Add the following configuration to diamond.conf:
+=======
+add config to diamond.conf:
+>>>>>>> kairosdb
 
 [[KairosDBHandler]]
 host = localhost
 port = 4242
 
+<<<<<<< HEAD
 Optionaly if you like to use Tags, you should add field [[[tags]]] in collector config.
+=======
+Optionaly if you like to usa Tags (Metrics 2.0), you should add field [[[tags]]] in collector config.
+>>>>>>> kairosdb
 Example:
 
 [[CPUCollector]]
 enabled = True
 [[[tags]]]
 env=develop
+<<<<<<< HEAD
 
 """
 
@@ -22,12 +31,25 @@ import socket
 
 from Handler import Handler
 from diamond.collector import get_hostname
+=======
+host=localhost
+
+"""
+
+from Handler import Handler
+from diamond.collector import get_hostname
+import socket
+>>>>>>> kairosdb
 
 
 class KairosDBHandler(Handler):
     """
     Implements the abstract Handler class, sending data to kairosdb.
+<<<<<<< HEAD
     It sets by default tag host which indicates hostname.
+=======
+    It sets by default tag [host] which indicates hostname.
+>>>>>>> kairosdb
     """
 
     RETRY = 3
@@ -88,9 +110,17 @@ class KairosDBHandler(Handler):
         """
         Parse tags to KairosDB format "key1=value1 key2=value2...keyN=valueN".
         """
+<<<<<<< HEAD
 
         if isinstance(tags, dict):
             parsed_tags = " ".join(["{}={}".format(k, v) for k, v in tags.iteritems()])
+=======
+        parsed_tags = ''
+        if isinstance(tags, dict):
+            for key, value in tags.iteritems():
+                parsed_tags += "{key}={value} ".format(key=key, value=value)
+
+>>>>>>> kairosdb
         else:
             parsed_tags = tags
         return parsed_tags
@@ -102,10 +132,19 @@ class KairosDBHandler(Handler):
         # Append the data to the array as a string
         # Add default tag
 
+<<<<<<< HEAD
         tags = self._tags_parser(metric.tags or '')
 
         if not 'host' in tags:
             tags += " host={hostname}".format(hostname=self.hostname)
+=======
+        host = "host={hostname}".format(hostname=self.hostname)
+
+        tags = self._tags_parser(metric.tags or '')
+
+        if not 'host' in tags:
+            tags += host
+>>>>>>> kairosdb
 
         command = "put {metric} {timestamp} {value} {tags} \n".format(
             metric="{}.{}".format(metric.getCollectorPath(),
