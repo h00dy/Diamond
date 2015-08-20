@@ -1,5 +1,5 @@
 """
-Send metrics to a [KairosDB](http://kairosdb.github.io/) using telnet or rest
+Send metrics to a [KairosDB](http://kairosdb.github.io/) using telnet or REST
 method.
 
 Add the following configuration to diamond.conf:
@@ -8,7 +8,7 @@ Add the following configuration to diamond.conf:
 host = localhost
 port = 4242
 
-Optionaly if you like to use Tags, you should add field [[[tags]]] in collector config.
+Optionaly if you like to use Tags, you should add section [[[Tags]]] in collector config.
 Example:
 
 [[CPUCollector]]
