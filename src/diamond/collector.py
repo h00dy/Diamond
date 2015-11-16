@@ -201,6 +201,8 @@ class Collector(object):
 
                 if self.name in config['collectors']:
                     self.config.merge(config['collectors'][self.name])
+                    if 'tags' in config['collectors'][self.name]:
+                        self.config.merge(config['collectors'][self.name]['tags'])
 
         if override_config is not None:
             if 'collectors' in override_config:

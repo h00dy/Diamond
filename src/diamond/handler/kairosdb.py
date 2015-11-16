@@ -1,11 +1,26 @@
 """
-Send metrics to a [KairosDB](http://kairosdb.github.io/) using telnet or rest
+Send metrics to a [KairosDB](http://kairosdb.github.io/) using telnet or REST
 method.
 
+Add the following configuration to diamond.conf:
+
+[[KairosDBHandler]]
+host = localhost
+port = 4242
+
+Optionaly if you like to use Tags, you should add section [[[Tags]]] in collector config.
+Example:
+
+[[CPUCollector]]
+enabled = True
+[[[tags]]]
+env=develop
 """
 
-from Handler import Handler
 import socket
+
+from Handler import Handler
+from diamond.collector import get_hostname
 
 
 class KairosDBHandler(Handler):
@@ -29,6 +44,7 @@ class KairosDBHandler(Handler):
         self.host = self.config['host']
         self.port = int(self.config['port'])
         self.timeout = int(self.config['timeout'])
+        self.hostname = get_hostname(self.config)
 
         # Connect
         self._connect()
@@ -67,17 +83,36 @@ class KairosDBHandler(Handler):
         """
         self._close()
 
+    @staticmethod
+    def _tags_parser(tags):
+        """
+        Parse tags to KairosDB format "key1=value1 key2=value2...keyN=valueN".
+        """
+
+        if isinstance(tags, dict):
+            parsed_tags = " ".join(["{}={}".format(k, v) for k, v in tags.iteritems()])
+        else:
+            parsed_tags = tags
+
+        return parsed_tags
+
     def process(self, metric):
         """
         Process a metric by sending it to KairosDB
         """
         # Append the data to the array as a string
+
+        tags = self._tags_parser(metric.tags or '')
+
+        if 'host' not in tags:
+            tags += " host={hostname}".format(hostname=self.hostname)
+
         command = "put {metric} {timestamp} {value} {tags} \n".format(
             metric="{}.{}".format(metric.getCollectorPath(),
                                   metric.getMetricPath()),
             timestamp=metric.timestamp,
             value=metric.value,
-            tags=metric.tags or ''
+            tags=tags
         )
         self._send(command)
 
